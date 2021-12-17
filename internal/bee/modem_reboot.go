@@ -13,33 +13,37 @@ func (svc *Service) ModemReboot() error {
 
 	svc.isReboot = true
 
-	var body string = "<request><Control>1</Control></request>"
-	var url string = "http://192.168.8.1/api/device/control"
+	var bodyReboot = svc.cfg.Modem.BodyReboot
+	var urlReboot = svc.cfg.Modem.Host + svc.cfg.Modem.PathReboot
 
-	resp, err := svc.req.Post(url, body)
+	resp, err := svc.req.Post(urlReboot, bodyReboot)
 	if err != nil {
+		// TODO: Настроить логирование
 		fmt.Errorf("ModemReboot: %w", err)
 	}
 	defer resp.Body.Close()
 
-	go rebootControl(&svc.isReboot)
+	var homeModem = svc.cfg.Modem.Host + svc.cfg.Modem.PathHome
+	var checkHost = svc.cfg.Modem.CheckHost
+
+	go rebootControl(&svc.isReboot, homeModem, checkHost)
 
 	return nil
 }
 
-func rebootControl(isReboot *bool) {
+func rebootControl(isReboot *bool, homeModem, checkHost string) {
 	time.Sleep(25 * time.Second)
 
-	status := rebootCheck()
+	status := rebootCheck(checkHost)
 	if !status {
-		var urlModem = "http://192.168.8.1/html/home.html"
-		code, err := healthCheck(urlModem)
+		code, err := healthCheck(homeModem)
 		if err != nil || code != 200 {
+			// TODO: Настроить логирование
 			log.Println(fmt.Errorf("modemRebootState: StatusCode(%d): %w", code, err))
 		} else {
-			var urlInt = "https://yandex.ru"
-			code, err := healthCheck(urlInt)
+			code, err := healthCheck(checkHost)
 			if err != nil || code != 200 {
+				// TODO: Настроить логирование
 				log.Println(fmt.Errorf("modemRebootState: StatusCode(%d): %w", code, err))
 			}
 		}
@@ -48,12 +52,11 @@ func rebootControl(isReboot *bool) {
 	*isReboot = false
 }
 
-func rebootCheck() bool {
+func rebootCheck(checkHost string) bool {
 	var status = false
-	var checkURL = "https://yandex.ru"
 
 	for i := 0; i < 10; i++ {
-		_, err := healthCheck(checkURL)
+		_, err := healthCheck(checkHost)
 		if err != nil {
 			time.Sleep(time.Second * 3)
 			continue

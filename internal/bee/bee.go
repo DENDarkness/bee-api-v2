@@ -1,20 +1,23 @@
 package bee
 
 import (
+	"bee-api-v2/internal/config"
 	"fmt"
 	"net/http"
 	"time"
 )
 
 type Service struct {
-	req      Requester
-	isReboot bool
+	req			Requester
+	cfg 		config.Cfg
+	isReboot 	bool
 }
 
-func New(r Requester) *Service {
+func New(r Requester, cfg config.Cfg) *Service {
 	return &Service{
-		req:      r,
-		isReboot: false,
+		req:      	r,
+		cfg:		cfg,
+		isReboot: 	false,
 	}
 }
 
@@ -31,6 +34,7 @@ func healthCheck(url string) (int, error) {
 
 	resp, err := client.Get(url)
 	if err != nil || resp.StatusCode != 200 {
+		// TODO: Настроить логирование
 		return 0, fmt.Errorf("healthCheck: %w", err)
 	}
 	defer resp.Body.Close()

@@ -1,0 +1,12 @@
+httpServer:
+  addr: ":7777"
+  readTimeout: 10
+  writeTimeout: 10
+  readHeaderTimeout: 10
+
+modem:
+  host: "http://192.168.8.1"
+  pathHome: "/html/home.html"
+  pathReboot: "/api/device/control"
+  bodyReboot: "<request><Control>1</Control></request>"
+  checkHost: "https://yandex.ru"

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bee-api-v2/internal/config"
 	"context"
 	"log"
 	"net/http"
@@ -11,15 +12,15 @@ type Server struct {
 	httpServer *http.Server
 }
 
-func NewServer(h http.Handler) *Server {
+func NewServer(h http.Handler, cfg *config.Cfg) *Server {
 	var s = &Server{}
 
 	s.httpServer = &http.Server{
-		Addr: ":7777",
-		Handler: h,
-		ReadTimeout: time.Second * 10,
-		WriteTimeout: time.Second * 10,
-		ReadHeaderTimeout: time.Second * 10,
+		Addr:              cfg.Server.Addr,
+		Handler:           h,
+		ReadTimeout:       time.Second * cfg.Server.ReadTimeout,
+		WriteTimeout:      time.Second * cfg.Server.WriteTimeout,
+		ReadHeaderTimeout: time.Second * cfg.Server.ReadHeaderTimeout,
 	}
 
 	return s
@@ -37,9 +38,9 @@ func (srv *Server) Start() {
 }
 
 func (srv *Server) Stop() {
-	ctx, _ := context.WithTimeout(context.Background(), 10 * time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	if err := srv.httpServer.Shutdown(ctx); err != nil {
-		//TODO: Обработать ошибку
+		// TODO: Обработать ошибку
 		log.Fatalf("Failed to shutdown http server gracefully: %v", err)
 	}
 }
