@@ -11,7 +11,7 @@ func (svc *Service) ModemReboot() error {
 		return nil
 	}
 
-	svc.isReboot = false
+	svc.isReboot = true
 
 	var body string = "<request><Control>1</Control></request>"
 	var url string = "http://192.168.8.1/api/device/control"
