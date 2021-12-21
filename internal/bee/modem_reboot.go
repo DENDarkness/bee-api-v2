@@ -19,7 +19,10 @@ func (svc *Service) ModemReboot() error {
 
 	resp, err := svc.req.Post(urlReboot, bodyReboot)
 	if err != nil {
-		return fmt.Errorf("ModemReboot: %w", err)
+		msgErr := fmt.Errorf("ModemReboot: %w", err)
+		svc.logger.Warn(msgErr.Error())
+		svc.isReboot = false
+		return msgErr
 	}
 	defer resp.Body.Close()
 

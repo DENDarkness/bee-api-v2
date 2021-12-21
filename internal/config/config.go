@@ -10,6 +10,7 @@ import (
 
 type http struct {
 	Server server
+	Client client
 }
 
 type server struct {
@@ -19,10 +20,15 @@ type server struct {
 	ReadHeaderTimeout time.Duration `yaml:"readHeaderTimeout"`
 }
 
+type client struct {
+	Timeout	time.Duration	`yaml:"timeout"`
+}
+
 type modem struct {
 	Host       string `yaml:"host"`
 	PathHome   string `yaml:"pathHome"`
 	PathReboot string `yaml:"pathReboot"`
+	PathToken  string `yaml:"pathToken"`
 	BodyReboot string `yaml:"bodyReboot"`
 	CheckHost  string `yaml:"checkHost"`
 }

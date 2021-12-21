@@ -20,7 +20,7 @@ func main() {
 	l := logger.NewLogger()
 
 	// Created requester
-	req := requester.NewRequest()
+	req := requester.NewRequest(cfg)
 	// Created core
 	app := bee.New(req, cfg, l)
 	// Created router

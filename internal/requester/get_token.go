@@ -12,7 +12,7 @@ type TokenModem struct {
 
 func (r *Request) getToken() (*TokenModem, error) {
 	var token = TokenModem{}
-	var url = "http://192.168.8.1/api/webserver/SesTokInfo"
+	var url = r.cfg.Modem.Host + r.cfg.Modem.PathToken
 
 	resp, err := r.client.Get(url)
 	if err != nil {
