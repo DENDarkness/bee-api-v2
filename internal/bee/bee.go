@@ -9,11 +9,11 @@ import (
 
 type Service struct {
 	req			Requester
-	cfg 		config.Cfg
+	cfg 		*config.Cfg
 	isReboot 	bool
 }
 
-func New(r Requester, cfg config.Cfg) *Service {
+func New(r Requester, cfg *config.Cfg) *Service {
 	return &Service{
 		req:      	r,
 		cfg:		cfg,

@@ -12,13 +12,16 @@ import (
 func main() {
 
 	var cfgFlag string
-	flag.StringVar(&cfgFlag, "c", "config.yaml", "path configuration file")
+	flag.StringVar(&cfgFlag, "c", "config.yaml", "pa")
 
 	cfg := config.ReadConfig(cfgFlag)
 
-	r := requester.NewRequest()
-	app := bee.New(r)
-	h := router.NewRouter(*app)
+	// Created requester
+	req := requester.NewRequest()
+	// Created core
+	app := bee.New(req, cfg)
+	// Created router
+	h := router.NewRouter(app)
 
 	s := server.NewServer(h, cfg)
 

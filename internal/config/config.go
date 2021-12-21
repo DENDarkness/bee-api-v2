@@ -1,12 +1,17 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
 
 	"gopkg.in/yaml.v2"
 )
+
+type http struct {
+	Server server
+}
 
 type server struct {
 	Addr              string        `yaml:"addr"`
@@ -16,16 +21,16 @@ type server struct {
 }
 
 type modem struct {
-	Host			string	`yaml:"host"`
-	PathHome		string	`yaml:"pathHome"`
-	PathReboot		string	`yaml:"pathReboot"`
-	BodyReboot		string	`yaml:"bodyReboot"`
-	CheckHost		string	`yaml:"checkHost"`
+	Host       string `yaml:"host"`
+	PathHome   string `yaml:"pathHome"`
+	PathReboot string `yaml:"pathReboot"`
+	BodyReboot string `yaml:"bodyReboot"`
+	CheckHost  string `yaml:"checkHost"`
 }
 
 type Cfg struct {
-	Server	server
-	Modem	modem
+	HTTP  http
+	Modem modem
 }
 
 func ReadConfig(confPath string) *Cfg {
@@ -41,6 +46,8 @@ func ReadConfig(confPath string) *Cfg {
 		// TODO: Сделать лшгирование ошибок.
 		log.Fatalln(err)
 	}
+
+	fmt.Println("cfg: ", cfg)
 
 	return &cfg
 }

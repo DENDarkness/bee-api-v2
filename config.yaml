@@ -1,8 +1,9 @@
-httpServer:
-  addr: ":7777"
-  readTimeout: 10
-  writeTimeout: 10
-  readHeaderTimeout: 10
+http:
+  server:
+    addr: ":7777"
+    readTimeout: 10
+    writeTimeout: 10
+    readHeaderTimeout: 10
 
 modem:
   host: "http://192.168.8.1"

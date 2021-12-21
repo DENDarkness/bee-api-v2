@@ -16,11 +16,11 @@ func NewServer(h http.Handler, cfg *config.Cfg) *Server {
 	var s = &Server{}
 
 	s.httpServer = &http.Server{
-		Addr:              cfg.Server.Addr,
+		Addr:              cfg.HTTP.Server.Addr,
 		Handler:           h,
-		ReadTimeout:       time.Second * cfg.Server.ReadTimeout,
-		WriteTimeout:      time.Second * cfg.Server.WriteTimeout,
-		ReadHeaderTimeout: time.Second * cfg.Server.ReadHeaderTimeout,
+		ReadTimeout:       time.Second * cfg.HTTP.Server.ReadTimeout,
+		WriteTimeout:      time.Second * cfg.HTTP.Server.WriteTimeout,
+		ReadHeaderTimeout: time.Second * cfg.HTTP.Server.ReadHeaderTimeout,
 	}
 
 	return s
