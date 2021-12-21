@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -46,8 +45,6 @@ func ReadConfig(confPath string) *Cfg {
 		// TODO: Сделать лшгирование ошибок.
 		log.Fatalln(err)
 	}
-
-	fmt.Println("cfg: ", cfg)
 
 	return &cfg
 }

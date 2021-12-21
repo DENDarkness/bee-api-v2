@@ -5,22 +5,25 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 type Service struct {
-	req			Requester
-	cfg 		*config.Cfg
-	isReboot 	bool
+	req      Requester
+	cfg      *config.Cfg
+	logger   *zap.Logger
+	isReboot bool
 }
 
-func New(r Requester, cfg *config.Cfg) *Service {
+func New(r Requester, cfg *config.Cfg, logger *zap.Logger) *Service {
 	return &Service{
-		req:      	r,
-		cfg:		cfg,
-		isReboot: 	false,
+		req:      r,
+		cfg:      cfg,
+		logger:   logger,
+		isReboot: false,
 	}
 }
-
 
 func healthCheck(url string) (int, error) {
 	client := &http.Client{
@@ -34,7 +37,6 @@ func healthCheck(url string) (int, error) {
 
 	resp, err := client.Get(url)
 	if err != nil || resp.StatusCode != 200 {
-		// TODO: Настроить логирование
 		return 0, fmt.Errorf("healthCheck: %w", err)
 	}
 	defer resp.Body.Close()

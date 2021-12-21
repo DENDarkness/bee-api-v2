@@ -2,8 +2,9 @@ package bee
 
 import (
 	"fmt"
-	"log"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 func (svc *Service) ModemReboot() error {
@@ -18,7 +19,6 @@ func (svc *Service) ModemReboot() error {
 
 	resp, err := svc.req.Post(urlReboot, bodyReboot)
 	if err != nil {
-		// TODO: Настроить логирование
 		fmt.Errorf("ModemReboot: %w", err)
 	}
 	defer resp.Body.Close()
@@ -26,25 +26,24 @@ func (svc *Service) ModemReboot() error {
 	var homeModem = svc.cfg.Modem.Host + svc.cfg.Modem.PathHome
 	var checkHost = svc.cfg.Modem.CheckHost
 
-	go rebootControl(&svc.isReboot, homeModem, checkHost)
+	go rebootControl(&svc.isReboot, homeModem, checkHost, svc.logger)
 
 	return nil
 }
 
-func rebootControl(isReboot *bool, homeModem, checkHost string) {
+func rebootControl(isReboot *bool, homeModem, checkHost string, l *zap.Logger) {
 	time.Sleep(25 * time.Second)
+	logger := l.Sugar()
 
 	status := rebootCheck(checkHost)
 	if !status {
 		code, err := healthCheck(homeModem)
 		if err != nil || code != 200 {
-			// TODO: Настроить логирование
-			log.Println(fmt.Errorf("modemRebootState: StatusCode(%d): %w", code, err))
+			logger.Warnf("rebootControl : no connection to the modem [StatusCode: %d]: %v", code, err)
 		} else {
 			code, err := healthCheck(checkHost)
 			if err != nil || code != 200 {
-				// TODO: Настроить логирование
-				log.Println(fmt.Errorf("modemRebootState: StatusCode(%d): %w", code, err))
+				logger.Warnf("rebootControl : no internet access [StatusCode: %d]: %v", code, err)
 			}
 		}
 	}

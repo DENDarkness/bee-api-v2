@@ -8,7 +8,8 @@ import (
 )
 
 func NewRouter(s bee.ServiceApp) *gin.Engine {
-	var r = gin.New()
+	gin.SetMode(gin.ReleaseMode)
+	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
