@@ -11,7 +11,7 @@ import (
 
 type Server struct {
 	httpServer *http.Server
-	logger *zap.SugaredLogger
+	logger     *zap.SugaredLogger
 }
 
 func NewServer(h http.Handler, cfg *config.Cfg, logger *zap.SugaredLogger) *Server {
@@ -31,9 +31,10 @@ func NewServer(h http.Handler, cfg *config.Cfg, logger *zap.SugaredLogger) *Serv
 }
 
 func (srv *Server) Start() {
+	srv.logger.Info("server start")
 	go func() {
 		if err := srv.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			srv.logger.Fatalf("listen: %s\n", err)
+			srv.logger.Fatalf("listen: %s", err)
 		}
 	}()
 }
@@ -44,5 +45,5 @@ func (srv *Server) Stop() {
 	if err := srv.httpServer.Shutdown(ctx); err != nil {
 		srv.logger.Fatalf("server forced to shutdown: %v", err)
 	}
-	srv.logger.Info("Server exiting")
+	srv.logger.Info("server exiting")
 }
