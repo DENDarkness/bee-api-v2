@@ -14,3 +14,6 @@ modem:
   pathToken: "/api/webserver/SesTokInfo"
   bodyReboot: "<request><Control>1</Control></request>"
   checkHost: "https://yandex.ru"
+
+url:
+  getIP: "https://myexternalip.com/raw"

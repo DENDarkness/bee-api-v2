@@ -1,33 +1,31 @@
 package main
 
 import (
-	"bee-api-v2/internal/api/router"
-	"bee-api-v2/internal/api/server"
-	"bee-api-v2/internal/bee"
 	"bee-api-v2/internal/config"
+	"bee-api-v2/internal/launcher"
 	"bee-api-v2/internal/logger"
-	"bee-api-v2/internal/requester"
 	"flag"
+	"time"
+
+	"github.com/patrickmn/go-cache"
 )
 
 func main() {
 
 	var cfgFlag string
 	flag.StringVar(&cfgFlag, "c", "config.yaml", "pa")
+
 	// Read config
 	cfg := config.ReadConfig(cfgFlag)
+
 	// Created logger
-	l := logger.NewLogger()
+	l := logger.NewLogger().Sugar()
 
-	// Created requester
-	req := requester.NewRequest(cfg)
-	// Created core
-	app := bee.New(req, cfg, l)
-	// Created router
-	h := router.NewRouter(app)
+	// Create memory cache
+	c := cache.New(5*time.Second, 10*time.Second)
 
-	s := server.NewServer(h, cfg)
+	app := launcher.NewApp(cfg, l, c)
 
-	s.Start()
+	app.Launch()
 
 }

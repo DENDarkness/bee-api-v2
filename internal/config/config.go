@@ -33,9 +33,14 @@ type modem struct {
 	CheckHost  string `yaml:"checkHost"`
 }
 
+type url struct {
+	GetIP string `yaml:"getIP"`
+}
+
 type Cfg struct {
 	HTTP  http
 	Modem modem
+	URL url
 }
 
 func ReadConfig(confPath string) *Cfg {

@@ -1,10 +1,11 @@
 package bee
 
 import (
+	"bytes"
 	"fmt"
 	"time"
 
-	"go.uber.org/zap"
+	"github.com/patrickmn/go-cache"
 )
 
 func (svc *Service) ModemReboot() error {
@@ -14,8 +15,8 @@ func (svc *Service) ModemReboot() error {
 
 	svc.isReboot = true
 
-	var bodyReboot = svc.cfg.Modem.BodyReboot
-	var urlReboot = svc.cfg.Modem.Host + svc.cfg.Modem.PathReboot
+	bodyReboot := svc.cfg.Modem.BodyReboot
+	urlReboot := svc.cfg.Modem.Host + svc.cfg.Modem.PathReboot
 
 	resp, err := svc.req.Post(urlReboot, bodyReboot)
 	if err != nil {
@@ -26,32 +27,34 @@ func (svc *Service) ModemReboot() error {
 	}
 	defer resp.Body.Close()
 
-	var homeModem = svc.cfg.Modem.Host + svc.cfg.Modem.PathHome
-	var checkHost = svc.cfg.Modem.CheckHost
-
-	go rebootControl(&svc.isReboot, homeModem, checkHost, svc.logger)
+	go svc.rebootControl()
 
 	return nil
 }
 
-func rebootControl(isReboot *bool, homeModem, checkHost string, l *zap.Logger) {
+func (svc *Service) rebootControl() {
 	time.Sleep(25 * time.Second)
-	logger := l.Sugar()
+
+	homeModem := svc.cfg.Modem.Host + svc.cfg.Modem.PathHome
+	checkHost := svc.cfg.Modem.CheckHost
 
 	status := rebootCheck(checkHost)
 	if !status {
 		code, err := healthCheck(homeModem)
 		if err != nil || code != 200 {
-			logger.Warnf("rebootControl : no connection to the modem [StatusCode: %d]: %v", code, err)
+			svc.logger.Warnf("rebootControl : no connection to the modem [StatusCode: %d]: %v", code, err)
 		} else {
 			code, err := healthCheck(checkHost)
 			if err != nil || code != 200 {
-				logger.Warnf("rebootControl : no internet access [StatusCode: %d]: %v", code, err)
+				svc.logger.Warnf("rebootControl : no internet access [StatusCode: %d]: %v", code, err)
 			}
 		}
 	}
 
-	*isReboot = false
+	url := svc.cfg.URL.GetIP
+	go svc.getIP(url)
+
+	svc.isReboot = false
 }
 
 func rebootCheck(checkHost string) bool {
@@ -68,4 +71,25 @@ func rebootCheck(checkHost string) bool {
 	}
 
 	return status
+}
+
+func (svc *Service) getIP(url string) {
+	resp, err := svc.req.GetIP(url)
+	if err != nil {
+		svc.logger.Warnf("getIP: %v", err)
+		svc.repo.Delete("ip")
+		return
+	}
+	defer resp.Body.Close()
+
+	buf := new(bytes.Buffer)
+	_, err = buf.ReadFrom(resp.Body)
+	if err != nil {
+		svc.logger.Warnf("getIP: %v", err)
+		svc.repo.Delete("ip")
+		return
+	}
+	ip := buf.String()
+
+	svc.repo.Set("ip", ip, cache.DefaultExpiration)
 }

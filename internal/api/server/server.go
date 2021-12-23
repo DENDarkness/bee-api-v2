@@ -3,16 +3,18 @@ package server
 import (
 	"bee-api-v2/internal/config"
 	"context"
-	"log"
 	"net/http"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 type Server struct {
 	httpServer *http.Server
+	logger *zap.SugaredLogger
 }
 
-func NewServer(h http.Handler, cfg *config.Cfg) *Server {
+func NewServer(h http.Handler, cfg *config.Cfg, logger *zap.SugaredLogger) *Server {
 	var s = &Server{}
 
 	s.httpServer = &http.Server{
@@ -23,24 +25,24 @@ func NewServer(h http.Handler, cfg *config.Cfg) *Server {
 		ReadHeaderTimeout: time.Second * cfg.HTTP.Server.ReadHeaderTimeout,
 	}
 
+	s.logger = logger
+
 	return s
 }
 
 func (srv *Server) Start() {
-	if err := srv.httpServer.ListenAndServe(); err != nil {
-		if err != http.ErrServerClosed {
-			srv.Stop()
-			log.Fatalf("Http Server stopped unexpected: %v", err)
-		} else {
-			log.Println("Http Server stopped")
+	go func() {
+		if err := srv.httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			srv.logger.Fatalf("listen: %s\n", err)
 		}
-	}
+	}()
 }
 
 func (srv *Server) Stop() {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 	if err := srv.httpServer.Shutdown(ctx); err != nil {
-		// TODO: Обработать ошибку
-		log.Fatalf("Failed to shutdown http server gracefully: %v", err)
+		srv.logger.Fatalf("server forced to shutdown: %v", err)
 	}
+	srv.logger.Info("Server exiting")
 }

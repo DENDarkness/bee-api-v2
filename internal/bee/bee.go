@@ -11,14 +11,16 @@ import (
 
 type Service struct {
 	req      Requester
+	repo     Repository
 	cfg      *config.Cfg
-	logger   *zap.Logger
+	logger   *zap.SugaredLogger
 	isReboot bool
 }
 
-func New(r Requester, cfg *config.Cfg, logger *zap.Logger) *Service {
+func New(r Requester, c Repository, cfg *config.Cfg, logger *zap.SugaredLogger) *Service {
 	return &Service{
 		req:      r,
+		repo:     c,
 		cfg:      cfg,
 		logger:   logger,
 		isReboot: false,

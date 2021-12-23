@@ -8,7 +8,7 @@ import (
 func (r *Request) Get(url string) (*http.Response, error) {
 	token, err := r.getToken()
 	if err != nil {
-		return nil, fmt.Errorf("post: %w", err)
+		return nil, fmt.Errorf("method get: %w", err)
 	}
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -17,9 +17,8 @@ func (r *Request) Get(url string) (*http.Response, error) {
 
 	resp, err := r.client.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("post: %w", err)
+		return nil, fmt.Errorf("request execution failed [Get method]: %w", err)
 	}
-	defer resp.Body.Close()
 
 	return resp, nil
 }

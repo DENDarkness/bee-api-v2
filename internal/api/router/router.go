@@ -17,5 +17,6 @@ func NewRouter(s bee.ServiceApp) *gin.Engine {
 	h := handler.NewHandler(s)
 
 	api.GET("/node/new", h.ModemReboot)
+	api.GET("/node/ip", h.GetIP)
 	return r
 }

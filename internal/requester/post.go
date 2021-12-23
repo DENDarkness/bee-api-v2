@@ -22,7 +22,6 @@ func (r *Request) Post(url string, body string) (*http.Response, error) {
 	if err != nil {
 		return nil, fmt.Errorf("post: %w", err)
 	}
-	defer resp.Body.Close()
 
 	return resp, nil
 }
