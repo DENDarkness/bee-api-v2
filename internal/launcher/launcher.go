@@ -39,7 +39,7 @@ func (app *App) Launch() {
 	// Created core
 	a := bee.New(req, ms, app.cfg, app.logger)
 	// Created router
-	h := router.NewRouter(a)
+	h := router.NewRouter(a, app.cfg)
 
 	s := server.NewServer(h, app.cfg, app.logger)
 

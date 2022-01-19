@@ -17,3 +17,6 @@ modem:
 
 url:
   getIP: "https://myexternalip.com/raw"
+
+bee:
+  mode: "release"

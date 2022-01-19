@@ -37,10 +37,15 @@ type url struct {
 	GetIP string `yaml:"getIP"`
 }
 
+type bee struct {
+	Mode string `yaml:"mode"`
+}
+
 type Cfg struct {
 	HTTP  http
 	Modem modem
 	URL url
+	Bee bee
 }
 
 func ReadConfig(confPath string) *Cfg {
