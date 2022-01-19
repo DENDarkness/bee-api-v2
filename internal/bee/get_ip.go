@@ -2,13 +2,15 @@ package bee
 
 import (
 	"bytes"
+	"fmt"
 
 	"github.com/patrickmn/go-cache"
 )
 
 func (svc *Service) GetIP() (interface{}, error) {
-	ip, found := svc.repo.Get("ip")
+	ip, found := svc.cache.Get("ip")
 	if found {
+		fmt.Println("cache")
 		return ip, nil
 	}
 
@@ -26,7 +28,7 @@ func (svc *Service) GetIP() (interface{}, error) {
 	}
 	ip = buf.String()
 
-	svc.repo.Set("ip", ip, cache.DefaultExpiration)
+	svc.cache.Set("ip", ip, cache.DefaultExpiration)
 
 	return ip, nil
 }

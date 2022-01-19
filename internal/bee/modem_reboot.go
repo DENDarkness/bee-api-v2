@@ -77,7 +77,7 @@ func (svc *Service) getIP(url string) {
 	resp, err := svc.req.GetIP(url)
 	if err != nil {
 		svc.logger.Warnf("getIP: %v", err)
-		svc.repo.Delete("ip")
+		svc.cache.Delete("ip")
 		return
 	}
 	defer resp.Body.Close()
@@ -86,10 +86,10 @@ func (svc *Service) getIP(url string) {
 	_, err = buf.ReadFrom(resp.Body)
 	if err != nil {
 		svc.logger.Warnf("getIP: %v", err)
-		svc.repo.Delete("ip")
+		svc.cache.Delete("ip")
 		return
 	}
 	ip := buf.String()
 
-	svc.repo.Set("ip", ip, cache.DefaultExpiration)
+	svc.cache.Set("ip", ip, cache.DefaultExpiration)
 }

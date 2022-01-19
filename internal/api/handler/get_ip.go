@@ -14,6 +14,7 @@ func (h *Handler) GetIP(ctx *gin.Context) {
 			"msg": nil,
 			"error": err.Error(),
 		})
+
 		return
 	}
 

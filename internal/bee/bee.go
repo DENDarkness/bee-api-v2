@@ -11,7 +11,7 @@ import (
 
 type Service struct {
 	req      Requester
-	repo     Repository
+	cache    Repository
 	cfg      *config.Cfg
 	logger   *zap.SugaredLogger
 	isReboot bool
@@ -20,7 +20,7 @@ type Service struct {
 func New(r Requester, c Repository, cfg *config.Cfg, logger *zap.SugaredLogger) *Service {
 	return &Service{
 		req:      r,
-		repo:     c,
+		cache:    c,
 		cfg:      cfg,
 		logger:   logger,
 		isReboot: false,
