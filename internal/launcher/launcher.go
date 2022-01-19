@@ -17,11 +17,11 @@ import (
 
 type App struct {
 	cfg      *config.Cfg
-	logger   *zap.SugaredLogger
+	logger   *zap.Logger
 	memCache *cache.Cache
 }
 
-func NewApp(cfg *config.Cfg, logger *zap.SugaredLogger, cache *cache.Cache) *App {
+func NewApp(cfg *config.Cfg, logger *zap.Logger, cache *cache.Cache) *App {
 	return &App{
 		cfg:      cfg,
 		logger:   logger,
@@ -39,7 +39,7 @@ func (app *App) Launch() {
 	// Created core
 	a := bee.New(req, ms, app.cfg, app.logger)
 	// Created router
-	h := router.NewRouter(a, app.cfg)
+	h := router.NewRouter(a, app.cfg, app.logger)
 
 	s := server.NewServer(h, app.cfg, app.logger)
 

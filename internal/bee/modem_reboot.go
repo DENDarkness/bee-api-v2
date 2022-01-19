@@ -42,11 +42,11 @@ func (svc *Service) rebootControl() {
 	if !status {
 		code, err := healthCheck(homeModem)
 		if err != nil || code != 200 {
-			svc.logger.Warnf("rebootControl : no connection to the modem [StatusCode: %d]: %v", code, err)
+			svc.logger.Sugar().Warnf("rebootControl : no connection to the modem [StatusCode: %d]: %v", code, err)
 		} else {
 			code, err := healthCheck(checkHost)
 			if err != nil || code != 200 {
-				svc.logger.Warnf("rebootControl : no internet access [StatusCode: %d]: %v", code, err)
+				svc.logger.Sugar().Warnf("rebootControl : no internet access [StatusCode: %d]: %v", code, err)
 			}
 		}
 	}
@@ -76,7 +76,7 @@ func rebootCheck(checkHost string) bool {
 func (svc *Service) getIP(url string) {
 	resp, err := svc.req.GetIP(url)
 	if err != nil {
-		svc.logger.Warnf("getIP: %v", err)
+		svc.logger.Sugar().Warnf("getIP: %v", err)
 		svc.cache.Delete("ip")
 		return
 	}
@@ -85,7 +85,7 @@ func (svc *Service) getIP(url string) {
 	buf := new(bytes.Buffer)
 	_, err = buf.ReadFrom(resp.Body)
 	if err != nil {
-		svc.logger.Warnf("getIP: %v", err)
+		svc.logger.Sugar().Warnf("getIP: %v", err)
 		svc.cache.Delete("ip")
 		return
 	}

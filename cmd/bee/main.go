@@ -19,7 +19,7 @@ func main() {
 	cfg := config.ReadConfig(cfgFlag)
 
 	// Created logger
-	l := logger.NewLogger().Sugar()
+	l := logger.NewLogger()
 
 	// Create memory cache
 	c := cache.New(5*time.Second, 10*time.Second)

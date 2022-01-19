@@ -13,11 +13,11 @@ type Service struct {
 	req      Requester
 	cache    Repository
 	cfg      *config.Cfg
-	logger   *zap.SugaredLogger
+	logger   *zap.Logger
 	isReboot bool
 }
 
-func New(r Requester, c Repository, cfg *config.Cfg, logger *zap.SugaredLogger) *Service {
+func New(r Requester, c Repository, cfg *config.Cfg, logger *zap.Logger) *Service {
 	return &Service{
 		req:      r,
 		cache:    c,
