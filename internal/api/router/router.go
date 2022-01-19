@@ -13,21 +13,21 @@ func NewRouter(s bee.ServiceApp, cfg *config.Cfg) *gin.Engine {
 	switch mode {
 	case "release":
 		gin.SetMode(gin.ReleaseMode)
-		gin.DisableConsoleColor()
-	case "debug":
-		gin.SetMode(gin.DebugMode)
 	case "test":
 		gin.SetMode(gin.TestMode)
 	default:
 		gin.SetMode(gin.DebugMode)
 	}
 
+	gin.DisableConsoleColor()
+
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 
-	api := r.Group("/api/v2")
 	h := handler.NewHandler(s)
+
+	api := r.Group("/api/v2")
 	api.GET("/node/new", h.ModemReboot)
 	api.GET("/node/ip", h.GetIP)
 
