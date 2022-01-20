@@ -11,6 +11,7 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/patrickmn/go-cache"
 )
@@ -33,7 +34,7 @@ func (app *App) Launch() {
 	l := logger.NewLogger()
 
 	// Create memory cache
-	c := cache.New(app.cfg.Cache.DefaultExpiration, app.cfg.Cache.CleanupInterval)
+	c := cache.New(app.cfg.Cache.DefaultExpiration * time.Second, app.cfg.Cache.CleanupInterval * time.Second)
 
 	ms := memcache.NewMemStore(c)
 	// Created requester
