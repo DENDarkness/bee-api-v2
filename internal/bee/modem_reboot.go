@@ -1,29 +1,25 @@
 package bee
 
 import (
-	"bytes"
 	"fmt"
 	"time"
-
-	"github.com/patrickmn/go-cache"
 )
 
 func (svc *Service) ModemReboot() error {
+	// if variable isReboot is true then error nil is returned
 	if svc.isReboot {
 		return nil
 	}
-
+	// set the value of the isReboot variable to true
 	svc.isReboot = true
 
 	bodyReboot := svc.cfg.Modem.BodyReboot
 	urlReboot := svc.cfg.Modem.Host + svc.cfg.Modem.PathReboot
-
+	//
 	resp, err := svc.req.Post(urlReboot, bodyReboot)
 	if err != nil {
-		msgErr := fmt.Errorf("ModemReboot: %w", err)
-		svc.logger.Warn(msgErr.Error())
 		svc.isReboot = false
-		return msgErr
+		return fmt.Errorf("ModemReboot: PostRequest: %w", err)
 	}
 	defer resp.Body.Close()
 
@@ -34,6 +30,8 @@ func (svc *Service) ModemReboot() error {
 
 func (svc *Service) rebootControl() {
 	time.Sleep(25 * time.Second)
+	// clear cache
+	svc.cache.Delete("ip")
 
 	homeModem := svc.cfg.Modem.Host + svc.cfg.Modem.PathHome
 	checkHost := svc.cfg.Modem.CheckHost
@@ -50,9 +48,6 @@ func (svc *Service) rebootControl() {
 			}
 		}
 	}
-
-	url := svc.cfg.URL.GetIP
-	go svc.getIP(url)
 
 	svc.isReboot = false
 }
@@ -73,23 +68,3 @@ func rebootCheck(checkHost string) bool {
 	return status
 }
 
-func (svc *Service) getIP(url string) {
-	resp, err := svc.req.GetIP(url)
-	if err != nil {
-		svc.logger.Sugar().Warnf("getIP: %v", err)
-		svc.cache.Delete("ip")
-		return
-	}
-	defer resp.Body.Close()
-
-	buf := new(bytes.Buffer)
-	_, err = buf.ReadFrom(resp.Body)
-	if err != nil {
-		svc.logger.Sugar().Warnf("getIP: %v", err)
-		svc.cache.Delete("ip")
-		return
-	}
-	ip := buf.String()
-
-	svc.cache.Set("ip", ip, cache.DefaultExpiration)
-}
