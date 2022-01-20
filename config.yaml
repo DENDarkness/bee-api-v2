@@ -20,3 +20,7 @@ url:
 
 bee:
   mode: "release"
+
+cache:
+  defaultExpiration: 5
+  cleanupInterval: 10

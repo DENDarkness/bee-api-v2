@@ -41,11 +41,17 @@ type bee struct {
 	Mode string `yaml:"mode"`
 }
 
+type cache struct {
+	DefaultExpiration	time.Duration `yaml:"defaultExpiration"`
+	CleanupInterval 	time.Duration `yaml:"cleanupInterval"`
+}
+
 type Cfg struct {
 	HTTP  http
 	Modem modem
 	URL url
 	Bee bee
+	Cache cache
 }
 
 func ReadConfig(confPath string) *Cfg {
