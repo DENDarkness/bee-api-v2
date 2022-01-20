@@ -21,6 +21,7 @@ url:
 bee:
   mode: "release"
   log: "file"
+  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwbiI6Im5vZGVhcGkifQ.koYXW3PTrt8ZWFiAKPHZR5UWlnof4Be8AeZXS3Y5F4U"
 
 cache:
   defaultExpiration: 5

@@ -2,6 +2,7 @@ package router
 
 import (
 	"bee-api-v2/internal/api/handler"
+	"bee-api-v2/internal/api/middleware"
 	"bee-api-v2/internal/bee"
 	"bee-api-v2/internal/config"
 	"time"
@@ -27,8 +28,12 @@ func NewRouter(s bee.ServiceApp, cfg *config.Cfg, logger *zap.Logger) *gin.Engin
 	r := gin.New()
 	r.Use(ginzap.Ginzap(logger, time.RFC3339, true))
 	r.Use(ginzap.RecoveryWithZap(logger, true))
+	r.Use(middleware.Auth(cfg.Bee.Token))
 
 	h := handler.NewHandler(s)
+
+	old := r.Group("/v2")
+	old.GET("/reset/new", h.ModemReboot)
 
 	api := r.Group("/api/v2")
 	api.GET("/node/new", h.ModemReboot)

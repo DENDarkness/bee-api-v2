@@ -40,6 +40,7 @@ type url struct {
 type bee struct {
 	Mode string `yaml:"mode"`
 	Log  string `yaml:"log"`
+	Token string `yaml:"token"`
 }
 
 type cache struct {
