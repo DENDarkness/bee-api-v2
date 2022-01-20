@@ -20,6 +20,7 @@ url:
 
 bee:
   mode: "release"
+  log: "file"
 
 cache:
   defaultExpiration: 5

@@ -8,7 +8,12 @@ import (
 
 func NewLogger() *zap.Logger {
 	// TODO: при надобности можно переделать на кастомный конфиг.
-	logger, err := zap.NewProduction()
+	cfg := zap.NewProductionConfig()
+	cfg.OutputPaths = []string{
+		"/var/log/bee-api/bee.log",
+	}
+	// logger, err := zap.NewProduction()
+	logger, err := cfg.Build()
 	if err != nil {
 		log.Fatalf("can't initialize zap logger: %v", err)
 	}

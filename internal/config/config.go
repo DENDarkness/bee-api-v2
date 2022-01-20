@@ -21,7 +21,7 @@ type server struct {
 }
 
 type client struct {
-	Timeout	time.Duration	`yaml:"timeout"`
+	Timeout time.Duration `yaml:"timeout"`
 }
 
 type modem struct {
@@ -39,18 +39,19 @@ type url struct {
 
 type bee struct {
 	Mode string `yaml:"mode"`
+	Log  string `yaml:"log"`
 }
 
 type cache struct {
-	DefaultExpiration	time.Duration `yaml:"defaultExpiration"`
-	CleanupInterval 	time.Duration `yaml:"cleanupInterval"`
+	DefaultExpiration time.Duration `yaml:"defaultExpiration"`
+	CleanupInterval   time.Duration `yaml:"cleanupInterval"`
 }
 
 type Cfg struct {
 	HTTP  http
 	Modem modem
-	URL url
-	Bee bee
+	URL   url
+	Bee   bee
 	Cache cache
 }
 
