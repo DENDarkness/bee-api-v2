@@ -9,7 +9,7 @@ import (
 func main() {
 
 	var cfgFlag string
-	flag.StringVar(&cfgFlag, "c", "config.yaml", "pa")
+	flag.StringVar(&cfgFlag, "c", "config.yaml", "path to config file")
 
 	// Read config
 	cfg := config.ReadConfig(cfgFlag)
