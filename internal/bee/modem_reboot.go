@@ -10,6 +10,12 @@ func (svc *Service) ModemReboot() error {
 	if svc.isReboot {
 		return nil
 	}
+
+	err := svc.InternetTurnOff()
+	if err != nil {
+		svc.logger.Sugar().Warnf("rebootControl: %v", err)
+	}
+
 	// set the value of the isReboot variable to true
 	svc.isReboot = true
 
@@ -29,27 +35,54 @@ func (svc *Service) ModemReboot() error {
 }
 
 func (svc *Service) rebootControl() {
+
 	time.Sleep(25 * time.Second)
 	// clear cache
 	svc.cache.Delete("ip")
 
 	homeModem := svc.cfg.Modem.Host + svc.cfg.Modem.PathHome
-	checkHost := svc.cfg.Modem.CheckHost
+	// checkHost := svc.cfg.Modem.CheckHost
 
-	status := rebootCheck(checkHost)
-	if !status {
-		code, err := healthCheck(homeModem)
-		if err != nil || code != 200 {
-			svc.logger.Sugar().Warnf("rebootControl : no connection to the modem [StatusCode: %d]: %v", code, err)
-		} else {
-			code, err := healthCheck(checkHost)
-			if err != nil || code != 200 {
-				svc.logger.Sugar().Warnf("rebootControl : no internet access [StatusCode: %d]: %v", code, err)
-			}
-		}
+	s := modemStatus(homeModem)
+	if !s {
+		svc.logger.Warn("MODEM PIZDEC")
+	}
+
+	// status := rebootCheck(checkHost)
+	// if !status {
+	// 	code, err := healthCheck(homeModem)
+	// 	if err != nil || code != 200 {
+	// 		svc.logger.Sugar().Warnf("rebootControl : no connection to the modem [StatusCode: %d]: %v", code, err)
+	// 	} else {
+	// 		code, err := healthCheck(checkHost)
+	// 		if err != nil || code != 200 {
+	// 			svc.logger.Sugar().Warnf("rebootControl : no internet access [StatusCode: %d]: %v", code, err)
+	// 		}
+	// 	}
+	// }
+
+	err := svc.InternetTurnOn()
+	if err != nil {
+		svc.logger.Sugar().Warnf("rebootControl: %v", err)
 	}
 
 	svc.isReboot = false
+}
+
+func modemStatus(url string) bool {
+	var status = false
+
+	for i := 0; i < 300; i++ {
+		_, err := healthCheck(url)
+		if err != nil {
+			time.Sleep(time.Second * 1)
+			continue
+		}
+		status = true
+		break
+	}
+
+	return status
 }
 
 func rebootCheck(checkHost string) bool {
@@ -67,4 +100,3 @@ func rebootCheck(checkHost string) bool {
 
 	return status
 }
-

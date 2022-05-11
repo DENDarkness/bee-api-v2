@@ -8,6 +8,11 @@ import (
 type ServiceApp interface {
 	ModemReboot() error
 	GetIP() (interface{}, error)
+	InternetTurnOn() error
+	InternetTurnOff() error
+	USSDSend() error
+	USSDGet() error
+	GetDeviceInformation() (*DeviceInformation, error)
 }
 
 type Requester interface {

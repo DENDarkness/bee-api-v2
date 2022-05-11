@@ -25,12 +25,14 @@ type client struct {
 }
 
 type modem struct {
-	Host       string `yaml:"host"`
-	PathHome   string `yaml:"pathHome"`
-	PathReboot string `yaml:"pathReboot"`
-	PathToken  string `yaml:"pathToken"`
-	BodyReboot string `yaml:"bodyReboot"`
-	CheckHost  string `yaml:"checkHost"`
+	Host               string `yaml:"host"`
+	PathInternetSwitch string `yaml:"pathInternetSwitch"`
+	PathHome           string `yaml:"pathHome"`
+	PathReboot         string `yaml:"pathReboot"`
+	PathToken          string `yaml:"pathToken"`
+	PathInformation    string `yaml:"pathInformation"`
+	BodyReboot         string `yaml:"bodyReboot"`
+	CheckHost          string `yaml:"checkHost"`
 }
 
 type url struct {
@@ -38,8 +40,8 @@ type url struct {
 }
 
 type bee struct {
-	Mode string `yaml:"mode"`
-	Log  string `yaml:"log"`
+	Mode  string `yaml:"mode"`
+	Log   string `yaml:"log"`
 	Token string `yaml:"token"`
 }
 

@@ -38,6 +38,12 @@ func NewRouter(s bee.ServiceApp, cfg *config.Cfg, logger *zap.Logger) *gin.Engin
 	api := r.Group("/api/v2")
 	api.GET("/node/new", h.ModemReboot)
 	api.GET("/node/ip", h.GetIP)
+	// api.GET("/node/device/information", h.GetDeviceInformation)
+	// api.POST("node/ussd/send", h.USSDSend)
+	// api.GET("node/ussd/get", h.USSDGet)
+
+	api.POST("/node/internet/off", h.InternetTurnOff)
+	api.POST("/node/internet/on", h.InternetTurnOn)
 
 	return r
 }

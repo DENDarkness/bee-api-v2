@@ -26,6 +26,8 @@ func (svc *Service) GetIP() (interface{}, error) {
 	}
 	ip = buf.String()
 
+	svc.logger.Sugar().Infof("IPAddress: %v", ip)
+
 	svc.cache.Set("ip", ip, cache.DefaultExpiration)
 
 	return ip, nil

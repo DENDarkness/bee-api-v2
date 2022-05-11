@@ -10,8 +10,10 @@ http:
 modem:
   host: "http://192.168.8.1"
   pathHome: "/html/home.html"
+  pathInternetSwitch: "/api/dialup/mobile-dataswitch"
   pathReboot: "/api/device/control"
   pathToken: "/api/webserver/SesTokInfo"
+  pathInformation: "/api/device/information"
   bodyReboot: "<request><Control>1</Control></request>"
   checkHost: "https://yandex.ru"
 
